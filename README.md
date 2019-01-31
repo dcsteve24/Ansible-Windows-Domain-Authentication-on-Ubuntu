@@ -13,8 +13,8 @@ while the guide states that adding lines to the sssd.conf like
 
 will control accesses to the machine; this did not work for our enviornment. Once I tied the domain authentication into the devices, anybody that had a domain account could log in. However, only those I explicitly allowed to sudo through the specified domain group, could do so. I managed to control access by setting a AllowedGroup setting on the ssh configs; physical access to the machines were not possible because of virtualization. But be aware of this; if a fix is found, I'd be curious and edit this as needed.
 
-#Notice
-Running this play will edit the following files:
+# Warning:
+running this play will edit the following files:
 - /etc/krb5.conf
 - /etc/ntp.conf
 - /etc/realmd.conf

@@ -1,0 +1,10 @@
+---
+realm_domain: domain_name
+realm_ad_ou: LDAP_compartment_for_joined_client_here
+
+#If your group has spaces in it, you must escape the space (\)
+#for example, for domain admins, it would look like this: domain\ admins
+sudo_group: allowed_sudoers_here
+
+# It is important that krb5 domain is in ALL CAPITALS
+krb5_default_realm: CAPITAL_DOMAIN_NAME

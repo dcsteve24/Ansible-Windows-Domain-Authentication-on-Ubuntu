@@ -1,0 +1,7 @@
+---
+- hosts: all
+  remote_user: your_ssh_user 
+  become: true
+  roles:
+    - sssd_auth
+

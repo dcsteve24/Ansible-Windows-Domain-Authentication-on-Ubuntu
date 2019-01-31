@@ -65,14 +65,9 @@
     responses:
       (?i)Password: "{{ kerberos_user_password }}"
 
-# Check for existing AD
 - name: sssd-auth | Checking to see if system is already joined to AD
   command: /bin/bash -c "/usr/sbin/realm list"
   register: realm_list_results
-
-- name: sssd-auth | Debug realm_list_results
-  debug:
-    msg: "{{ realm_list_results.stdout }}"
 
 - name: sssd-auth | Join system to AD
   expect:

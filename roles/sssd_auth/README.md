@@ -1,4 +1,4 @@
-Role Name
+SSSD_AUTH
 =========
 
 This role enables SSSD-Authentication to a windows domain, allowing users to login with just username; not username@domain.

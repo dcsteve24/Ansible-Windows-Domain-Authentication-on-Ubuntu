@@ -36,6 +36,7 @@ Example Playbook
 ----------------
 
     - hosts: all
+      become: true
       roles:
          - sssd_auth
 

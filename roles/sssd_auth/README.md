@@ -22,7 +22,12 @@ Requirements
 Role Variables
 --------------
 
-**Edit me when loaded to GitHub
+| Variable  | Required | Default | Description
+| ------------- | ------------- | ------------- | -------------|
+| realm_domain  | Yes  | N/A | used to hold your domain |
+| krb5_default_realm  | Yes  | N/A | where the kerberos authentication occurs (typically same as realm_domain). Must be in all CAPS. |
+| realm_ad_ou | Yes | N/A | the OU or CN (in LDAP form) to place the PC when joined to the domain |
+
 
 Example Playbook
 ----------------

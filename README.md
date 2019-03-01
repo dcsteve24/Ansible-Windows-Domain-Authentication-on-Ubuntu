@@ -1,5 +1,8 @@
 # Ansible-Windows-Domain-Authentication-on-Linux
 
+SSSD_AUTH
+=========
+
 This is an ansible play that will enable windows active directory domain authentication on Linux machines. This play is based on the guide made here: http://ricktbaker.com/2017/11/08/ubuntu-16-with-active-directory-connectivity/
 
 This has been tested on Ubuntu 16 and Ubuntu 18.
@@ -22,10 +25,12 @@ running this play will edit the following files:
 
 If your target is a fresh attempt at this, this will not affect anything. If you have prior configs with these files, use at your own risk. Backups will be taken in the event this does mess up your enviornment. They will be stored at the location of the file as <file>.timestamp.
 
-# How To Use:
-This play is expected to be placed in your root ansible folder; default of /etc/ansible/
+Requirements
+------------
 
-When downloaded, the following edits will need to be made:
+- ability to ping and DNS resolve the domain/domain controller(s)
+- an account capable of adding clients to the domain
+
 1. Edit ./playbooks/sssd_auth.yml - Add the user you SSH/sudo with and change the hosts as needed for your enviornment.
 2. Edit ./roles/sssd_auth/templates/krb5.conf.j2 - Change default_realm to your domain in all caps.
 3. Edit ./roles/sssd_auth/templates/ntp.conf.j2 - point the server line (line 21) to your domain controller. Add another line stating the same thing but pointing to alternate domain controllers if you have multiple.
@@ -39,3 +44,29 @@ When downloaded, the following edits will need to be made:
 7. Edite ./roles/sssd_auth/vars/secrets.yml - enter your username and password of the user that can add or remove clients in the domain. Encrypt this file afterwards with ansible-vault encrypt path_to_file
 
 When all the information has been changed for your enviornment, run the play. I typically run this play with ansible-playbook -kK --ask-vault-pass path_to_sssd_auth.yml
+
+Role Variables
+--------------
+
+| Variable  | Location | Required | Default | Description
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| realm_domain  | ./roles/sssd_auth/vars/main.yml | Yes  | N/A | used to hold your domain |
+| krb5_default_realm  | ./roles/sssd_auth/vars/main.yml | Yes  | N/A | where the kerberos authentication occurs (typically same as realm_domain). Must be in all CAPS. |
+| realm_ad_ou | ./roles/sssd_auth/vars/main.yml |Yes | N/A | the OU or CN (in LDAP form) to place the PC when joined to the domain |
+| sudo_group | ./roles/sssd_auth/vars/main.yml |Yes | N/A | Adds the specified group to allow the ability to sudo|
+| kerberos_user | ./roles/sssd_auth/vars/secrets.yml | Yes | N/A | The user that can add computers to the domain |
+| kerberos_user_password | ./roles/sssd_auth/vars/secrets.yml | Yes | N/A | The password of the user that can add computers to the domain |
+
+
+Example Playbook
+----------------
+
+    - hosts: all
+      become: true
+      roles:
+         - sssd_auth
+
+Author Information
+------------------
+
+Steven Craig, 31Jan19

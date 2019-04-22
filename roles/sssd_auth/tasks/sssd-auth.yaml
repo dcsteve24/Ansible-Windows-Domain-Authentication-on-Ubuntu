@@ -1,15 +1,9 @@
 ---
-- name: sssd-auth |  Load Secrets
-  include_vars: "secrets.yml"
-
-- name: sssd-auth | Load Vars
-  include_vars: "main.yml"
-
 - name: sssd-auth | Install SSSD Auth Required Packages
   apt:
-    name: 
+    name:
       - realmd
-      - sssd 
+      - sssd
       - sssd-tools
       - samba-common
       - krb5-user
@@ -73,7 +67,7 @@
   expect:
     command: /bin/bash -c "/usr/sbin/realm join {{ realm_domain }} --computer-ou='{{ realm_ad_ou }}' --user={{ kerberos_user }}"
     responses:
-      (?i)Password: "{{ kerberos_user_password }}"  
+      (?i)Password: "{{ kerberos_user_password }}"
   ignore_errors: yes
   when: realm_list_results.stdout == ""
   become: true

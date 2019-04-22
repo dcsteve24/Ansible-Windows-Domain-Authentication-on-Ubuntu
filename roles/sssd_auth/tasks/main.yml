@@ -1,2 +1,4 @@
 ---
-- include: sssd-auth.yml
+- include_vars: "main.yml"
+- include_vars: "secrets.yml"
+- include: sssd-auth.yaml

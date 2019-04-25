@@ -1,0 +1,17 @@
+---
+- name: install-sw | Install SSSD Auth Required Packages and to Run This Play
+  apt:
+    name:
+      - realmd
+      - sssd
+      - sssd-tools
+      - samba-common
+      - krb5-user
+      - packagekit
+      - samba-common-bin
+      - samba-libs
+      - adcli
+      - ntp
+      - python-pexpect
+    state: latest
+    update_cache: yes

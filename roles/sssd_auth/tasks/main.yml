@@ -1,4 +1,12 @@
 ---
 - include_vars: "main.yml"
 - include_vars: "secrets.yml"
-- include: sssd-auth.yaml
+- include: install-sw.yaml
+- include: configure-ntp.yaml
+- include: configure-realmd.yaml
+- include: configure-krb5.yaml
+- include: add-to-domain.yaml
+- include: configure-pam.yaml
+- include: configure-sssd.yaml
+- include: configure-nsswitch.yaml
+- include: configure-sudo.yaml

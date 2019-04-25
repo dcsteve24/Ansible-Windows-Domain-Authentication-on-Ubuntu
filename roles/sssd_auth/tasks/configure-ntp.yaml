@@ -1,0 +1,40 @@
+---
+#This check ensures we don't keep adding more and more # signs.
+- name: configure-ntp | Check if Correct Settings
+  lineinfile:
+    path: "{{ ntp_conf }}"
+    line: "#pool 3.ubuntu.pool.ntp.org iburst"
+    state: present
+  check_mode: yes
+  register: result
+
+- name: configure-ntp | Comment out Ubuntu NTP
+  replace:
+    path: "{{ ntp_conf }}"
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - { regexp: "pool 0.ubuntu.pool.ntp.org iburst", replace: "#pool 0.ubuntu.pool.ntp.org iburst" }
+    - { regexp: "pool 1.ubuntu.pool.ntp.org iburst", replace: "#pool 1.ubuntu.pool.ntp.org iburst" }
+    - { regexp: "pool 2.ubuntu.pool.ntp.org iburst", replace: "#pool 2.ubuntu.pool.ntp.org iburst" }
+    - { regexp: "pool 3.ubuntu.pool.ntp.org iburst", replace: "#pool 3.ubuntu.pool.ntp.org iburst" }
+    - { regexp: "pool ntp.ubuntu.com", replace: "#pool ntp.ubuntu.com" }
+  when: result.changed
+
+- name: configure-ntp | Directo NTP to the Server
+  lineinfile:
+    path: "{{ realm_domain }}"
+    insertafter: "#pool ntp.ubuntu.com"
+    line: "server {{ domain_controller }}"
+    state: present
+  when: result.changed
+
+- name: configure-ntp | Restart the NTP service
+  service:
+    name: ntp
+    state: restarted
+    enabled: yes
+  when: result.changed

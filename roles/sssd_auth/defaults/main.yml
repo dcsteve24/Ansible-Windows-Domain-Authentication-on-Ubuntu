@@ -1,0 +1,8 @@
+---
+ntp_conf: /etc/ntp.conf
+realmd_conf: /etc/realmd.conf
+krb5_conf: /etc/krb5.conf
+pam_common: /etc/pam.d/common-session
+sssd_conf: /etc/sssd/sssd.conf
+nsswitch_conf: /etc/nsswitch.conf
+sudo_config: /etc/sudoers

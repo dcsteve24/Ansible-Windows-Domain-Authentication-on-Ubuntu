@@ -1,10 +1,22 @@
 ---
-realm_domain: 
-realm_ad_ou: 
+#----------------Fill Me In----------------
+realm_domain:
+realm_ad_ou:
 
 #If your group has spaces in it, you must escape the space (\)
 #for example, for domain admins, it would look like this: domain\ admins
-sudo_group: 
+sudo_group:
 
 # It is important that krb5 domain is in ALL CAPITALS
-krb5_default_realm: 
+krb5_default_realm:
+
+#----------------DEFAULTS-----------------
+#Uncomment and change as needed
+
+#ntp_conf: /etc/ntp.conf
+#realmd_conf: /etc/realmd.conf
+#krb5_conf: /etc/krb5.conf
+#pam_common: /etc/pam.d/common-session
+#sssd_conf: /etc/sssd/sssd.conf
+#nsswitch_conf: /etc/nsswitch.conf
+#sudo_config: /etc/sudoers

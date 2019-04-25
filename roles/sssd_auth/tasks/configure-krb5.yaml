@@ -1,0 +1,15 @@
+---
+- name: configure-krb5 | Configure krb5 For The Domain
+  lineinfile:
+    path: "{{ krb5_conf }}"
+    line: "{{ item }}"
+    insertbefore: BOF
+    owner: root
+    group: root
+    mode: 0644
+    state: present
+    backup: true
+  with_items:
+    - "rdns = false"
+    - "default_realm = {{ krb5_default_realm }}"
+    - "[libdefaults]"

@@ -1,0 +1,10 @@
+---
+- name: configure-nsswitch | Remove False Sudo Errors
+  replace:
+    path: "{{ nsswitch_conf }}"
+    regexp: "sudoers:        files sss"
+    replace: "sudoers:        files"
+    owner: root
+    group: root
+    mode: 0644
+    backup: true

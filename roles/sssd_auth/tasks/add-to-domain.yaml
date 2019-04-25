@@ -1,0 +1,18 @@
+---
+- name: add-to-domain | Create kerberos ticket
+  expect:
+    command: /bin/bash -c "/usr/bin/kinit -V {{ kerberos_user }}"
+    responses:
+      (?i)Password: "{{ kerberos_user_password }}"
+
+- name: add-to-domain | Checking to see if system is already joined to AD
+  command: /bin/bash -c "/usr/sbin/realm list"
+  register: realm_list_results
+
+- name: add-to-domain | Join system to AD
+  expect:
+    command: /bin/bash -c "/usr/sbin/realm join {{ realm_domain }} --computer-ou='{{ realm_ad_ou }}' --user={{ kerberos_user }}"
+    responses:
+      (?i)Password: "{{ kerberos_user_password }}"
+  ignore_errors: yes
+  when: realm_list_results.stdout == ""

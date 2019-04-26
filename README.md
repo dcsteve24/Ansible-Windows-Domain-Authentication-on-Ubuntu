@@ -14,49 +14,50 @@ while the guide states that adding lines to the sssd.conf like
  - simple_allow_groups = group1,group2
  - simple_deny_groups = group1,group2
 
-will control accesses to the machine; this did not work for our enviornment. Once I tied the domain authentication into the devices, anybody that had a domain account could log in. However, only those I explicitly allowed to sudo through the specified domain group, could do so. I managed to control access by setting a AllowedGroup setting on the ssh configs; physical access to the machines were not possible because of virtualization. But be aware of this; if a fix is found, I'd be curious and edit this as needed.
+will control accesses to the machine; this did not work for our environment. Once I tied the domain authentication into the devices, anybody that had a domain account could log in. However, only those I explicitly allowed to sudo through the specified domain group, could do so. I managed to control access by setting a AllowedGroup setting on the ssh configs; physical access to the machines were not possible because of virtualization. But be aware of this; if a fix is found, I'd be curious and edit this as needed.
 
 # Warning:
 running this play will edit the following files:
-- /etc/krb5.conf
-- /etc/ntp.conf
-- /etc/realmd.conf
-- /etc/sssd/sssd.conf
+  - /etc/ntp.conf
+  - /etc/realmd.conf
+  - /etc/krb5.conf
+  - /etc/pam.d/common-session
+  - /etc/sssd/sssd.conf
+  - /etc/nsswitch.conf
+  - /etc/sudoers
 
-If your target is a fresh attempt at this, this will not affect anything. If you have prior configs with these files, use at your own risk. Backups will be taken in the event this does mess up your enviornment. They will be stored at the location of the file as <file>.timestamp.
+If your target is a fresh attempt at this, this will not affect anything. If you have prior configs with these files, use at your own risk. Backups will be taken in the event this does mess up your environment. They will be stored at the location of the file as <file>.timestamp.
 
 Requirements
 ------------
-
+**Prereqs**
 - ability to ping and DNS resolve the domain/domain controller(s)
 - an account capable of adding clients to the domain
 
-1. Edit ./playbooks/sssd_auth.yml - Add the user you SSH/sudo with and change the hosts as needed for your enviornment.
-2. Edit ./roles/sssd_auth/templates/krb5.conf.j2 - Change default_realm to your domain in all caps.
-3. Edit ./roles/sssd_auth/templates/ntp.conf.j2 - point the server line (line 21) to your domain controller. Add another line stating the same thing but pointing to alternate domain controllers if you have multiple.
-4. Edit ./roles/sssd_auth/templates/realmd.conf.j2 - change [your_domain] to your domain
-5. Edit ./roles/sssd_auth/templates/sssd.conf.j2 - change the following:
-   - domains = your_domain
-   - [domain/your_domain]
-   - ad_domain = your_domain
-   - krb5_realm = CAPITAL_YOUR_DOMAIN
-6. Edit ./roles/sssd_auth/vars/main.yml - enter your specific enviornment information; note the container should be in LDAP format, i.e. cn=computers,domain=your,domain=domain,domain=here. If you don't know it, you can obtain this info from windows Users and Computers; enable Advanced features under the view tab -->  right click desired destination --> Properties --> Attribute Editor tab --> find DistinguishedName. That entry is what you need to enter.
-7. Edite ./roles/sssd_auth/vars/secrets.yml - enter your username and password of the user that can add or remove clients in the domain. Encrypt this file afterwards with ansible-vault encrypt path_to_file
-
-When all the information has been changed for your enviornment, run the play. I typically run this play with ansible-playbook -kK --ask-vault-pass path_to_sssd_auth.yml
+1. Edit ./roles/playbooks/sssd_auth.yml and fill in your environment info
+2. Edit ./roles/sssd_auth/vars/main.yml and fill in the variables that require your input. Also edit any defaults as desired.
+2. Edit ./roles/sssd_auth/vars/secrets.yml and fill in the variables that require your input.
+3. Encrypt the secrets file with ansible-vault encrypt ./roles/sssd_auth/vars/secrets.yml
+4. When all the information has been changed for your environment, run the play. I typically run this play with ansible-playbook -kK --ask-vault-pass path_to_sssd_auth.yml
 
 Role Variables
 --------------
 
 | Variable  | Location | Required | Default | Description
 | ------------- | ------------- | ------------- | ------------- | ------------- |
-| realm_domain  | ./roles/sssd_auth/vars/main.yml | Yes  | N/A | used to hold your domain |
+| krb5_conf | ./roles/sssd_auth/defaults/main.yml | Yes | /etc/krb5.conf | Path to the krb5 configuration |
 | krb5_default_realm  | ./roles/sssd_auth/vars/main.yml | Yes  | N/A | where the kerberos authentication occurs (typically same as realm_domain). Must be in all CAPS. |
-| realm_ad_ou | ./roles/sssd_auth/vars/main.yml |Yes | N/A | the OU or CN (in LDAP form) to place the PC when joined to the domain |
-| sudo_group | ./roles/sssd_auth/vars/main.yml |Yes | N/A | Adds the specified group to allow the ability to sudo|
 | kerberos_user | ./roles/sssd_auth/vars/secrets.yml | Yes | N/A | The user that can add computers to the domain |
 | kerberos_user_password | ./roles/sssd_auth/vars/secrets.yml | Yes | N/A | The password of the user that can add computers to the domain |
-
+| nsswitch_conf | ./roles/sssd_auth/defaults/main.yml | Yes | /etc/nsswitch.conf | Path to the nsswitch configuration |
+| ntp_conf | ./roles/sssd_auth/defaults/main.yml | Yes | /etc/ntp.conf | Path to the ntp configuration |
+| pam_common | ./roles/sssd_auth/defaults/main.yml | Yes | /etc/pam.d/common-session | Path to the pam common-session configuration |
+| realm_ad_ou | ./roles/sssd_auth/vars/main.yml |Yes | N/A | the OU or CN (in LDAP form) to place the PC when joined to the domain |
+| realmd_conf | ./roles/sssd_auth/defaults/main.yml | Yes | /etc/realmd.conf | Path to the realmd configuration |
+| realm_domain  | ./roles/sssd_auth/vars/main.yml | Yes  | N/A | used to hold your domain |
+| sssd_conf | ./roles/sssd_auth/defaults/main.yml | Yes | /etc/sssd/sssd.conf | Path to the sssd configuration |
+| sudo_group | ./roles/sssd_auth/vars/main.yml |Yes | N/A | Adds the specified group to allow the ability to sudo|
+| sudo_config | ./roles/sssd_auth/defaults/main.yml | Yes | /etc/sudoers | Path to the sudoers configuration |
 
 Example Playbook
 ----------------
@@ -70,3 +71,4 @@ Author Information
 ------------------
 
 Steven Craig, 31Jan19
+Edited By Steven Craig 24Apr19

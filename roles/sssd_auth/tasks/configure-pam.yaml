@@ -1,0 +1,7 @@
+---
+- name: configure-pam | Configure PAM to Make Home Directories On Initial Login
+  lineinfile:
+    path: "{{ pam_common }}"
+    state: present
+    backup: yes
+    line: 'session optional        pam_mkhomedir.so skel=/etc/skel/ umask=0077'

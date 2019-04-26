@@ -1,0 +1,7 @@
+---
+- name: configure-sudo | Configure Sudoers to Allow Specific Group to Sudo
+  lineinfile:
+    path: "{{ sudo_config }}"
+    state: present
+    backup: yes
+    line: '%{{ sudo_group }} ALL=(ALL:ALL) ALL'

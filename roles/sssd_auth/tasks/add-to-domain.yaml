@@ -4,10 +4,12 @@
     command: /bin/bash -c "/usr/bin/kinit -V {{ kerberos_user }}"
     responses:
       (?i)Password: "{{ kerberos_user_password }}"
+  changed_when: false
 
 - name: add-to-domain | Checking to see if system is already joined to AD
   command: /bin/bash -c "/usr/sbin/realm list"
   register: realm_list_results
+  changed_when: false
 
 - name: add-to-domain | Join system to AD
   expect:

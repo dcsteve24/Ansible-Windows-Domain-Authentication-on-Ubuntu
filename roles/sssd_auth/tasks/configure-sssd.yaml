@@ -26,4 +26,4 @@
       fallback_homedir = /home/%u
       simple_allow_users = $
       access_provider = ad
-    notify: restart sssd
+  notify: restart sssd
